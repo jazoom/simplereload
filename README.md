@@ -10,7 +10,7 @@
 
 ## Installation
 ```go
-go get https://github.com/jazoom/simplereload
+go get github.com/jazoom/simplereload
 ```
 
 ## Example usage
