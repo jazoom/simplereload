@@ -26,35 +26,35 @@ var (
 	route     = "/simplereload"
 	sseScript = `
 <script>
-    const maxRetryInterval = 1000;
+	const maxRetryInterval = 1000;
 	const initialRetryInterval = 100;
-    let retryInterval = initialRetryInterval;
+	let retryInterval = initialRetryInterval;
 	const shouldReload = "simplereloadFlag";
 
-    function connectEventSource() {
-        const sse = new EventSource("` + route + `");
-        sse.onopen = function(event) {
-            console.log("* Connected to Server-Sent Events for hot reload *");
-            if (sessionStorage.getItem(shouldReload)) {
+	function connectEventSource() {
+		const sse = new EventSource("` + route + `");
+		sse.onopen = function(event) {
+			console.log("* Connected to Server-Sent Events for hot reload *");
+			if (sessionStorage.getItem(shouldReload)) {
 				console.log("Reloading page...")
-                sessionStorage.removeItem(shouldReload);
-                location.reload();
+				sessionStorage.removeItem(shouldReload);
+				location.reload();
 			}
 			// No need to reload the page if the flag is not set
-            retryInterval = initialRetryInterval;
-        };
-        sse.onerror = function(event) {
-            console.log("* Server-Sent Events connection error. Retrying in " + (retryInterval / 1000) + " seconds... *");
-            sse.close();
-            setTimeout(() => {
+			retryInterval = initialRetryInterval;
+		};
+		sse.onerror = function(event) {
+			console.log("* Server-Sent Events connection error. Retrying in " + (retryInterval / 1000) + " seconds... *");
+			sse.close();
+			setTimeout(() => {
 				retryInterval = Math.min(retryInterval * 2, maxRetryInterval); // Exponential backoff
 				sessionStorage.setItem(shouldReload, "true");
-                connectEventSource();
-            }, retryInterval);
-        };
-    }
+				connectEventSource();
+			}, retryInterval);
+		};
+	}
 
-    connectEventSource();
+	connectEventSource();
 </script>
 `
 )
