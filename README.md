@@ -2,6 +2,8 @@
 
 `simplereload` is a small Go module that enables reloading the webpage after web server restart. It is a great companion to [wgo](https://github.com/bokwoon95/wgo), which reloads the server upon file change. So with `wgo` and `simplereload` together, whenever you save a file in your project your Go web server will restart and then the browser page will refresh automatically.
 
+Note: It doesn't seem to work in Firefox (SSE connection "onopen" isn't called). If someone can get it working let me know. There is an issue open for it.
+
 ## Features
 - Reload middleware for Go web servers
 - Based upon standard `net/http`
