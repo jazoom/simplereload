@@ -23,6 +23,7 @@ package main
 
 import (
 	"flag"
+	"log"
 	"net/http"
 
 	"github.com/jazoom/simplereload"
@@ -40,10 +41,37 @@ func main() {
 		handler = simplereload.Middleware(mux)
 	}
 
-	http.ListenAndServe(":2555", handler)
+	log.Fatal(http.ListenAndServe(":2555", handler))
 }
+```
 
+### ...with `chi`
 
+```go
+package main
+
+import (
+	"flag"
+	"log"
+	"net/http"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/jazoom/simplereload"
+)
+
+func main() {
+	isDev := flag.Bool("dev", false, "Whether to run in development mode")
+	flag.Parse()
+
+	r := chi.NewRouter()
+
+	if *isDev {
+		r.Use(simplereload.Middleware)
+		r.Get("/simplereload", simplereload.Handler)
+	}
+
+	log.Fatal(http.ListenAndServe(":2555", r))
+}
 ```
 
 ### ...with `echo`
@@ -72,7 +100,6 @@ func main() {
 
 	e.Logger.Fatal(e.Start(":2555"))
 }
-
 ```
 
 ## Notes
