@@ -11,6 +11,12 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Connection", "keep-alive")
 
+	shutdown := make(chan struct{})
+	server := r.Context().Value(http.ServerContextKey).(*http.Server)
+	server.RegisterOnShutdown(func() {
+		close(shutdown)
+	})
+
 	for {
 		select {
 		case <-time.After(1 * time.Second):
@@ -22,6 +28,8 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 				flusher.Flush()
 			}
 		case <-r.Context().Done():
+			return
+		case <-shutdown:
 			return
 		}
 	}

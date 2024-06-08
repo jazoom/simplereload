@@ -22,7 +22,7 @@ func (r *responseRecorder) Flush() {
 	}
 }
 
-var (
+const (
 	route     = "/simplereload"
 	sseScript = `
 <script>
@@ -71,8 +71,7 @@ func Middleware(next http.Handler) http.Handler {
 
 		contentType := rec.Header().Get("Content-Type")
 		if strings.HasPrefix(contentType, "text/html") {
-			body := rec.body.Bytes()
-			body = bytes.Replace(body, []byte("<head>"), []byte("<head>"+sseScript), 1)
+			body := bytes.Replace(rec.body.Bytes(), []byte("<head>"), []byte("<head>"+sseScript), 1)
 			rec.Header().Set("Content-Length", strconv.Itoa(len(body)))
 			w.Write(body)
 		} else {
